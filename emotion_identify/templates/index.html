@@ -1,0 +1,227 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Voice Based Emotion Recognition</title>
+
+    Bootstrap Core CSS -->
+    <script src= "http://code.jquery.com/jquery-2.1.1.js"> </script>
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.3.7/wavesurfer.min.js"></script>
+
+    <!-- <script src= "{% static 'js/jquery-2.1.1.js' %}"> </script>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/wavesurfer.min.js' %}"></script> -->
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'main' %}">Voice Based Emotion Recognition</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#uploadimagemodal" data-toggle="modal" data-target="#uploadimagemodal">Upload an Audio</a>
+                    </li>
+                    <li>
+                        <a href="#recaudio" data-toggle="modal" data-target="#recaudio">Recording an Audio</a>
+                    </li>
+                    <li>
+                        <a href="#sample" data-toggle="modal" data-target="#sample">Sample</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+    <br>
+    <!-- Page Content -->
+    <div class="container">
+
+        <!-- Page Heading -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header text-center">Audio
+                </h1>
+            </div>
+        </div>
+        <!-- /.row -->
+        <!-- Project One -->
+        <div class="row">
+            <div class="col-md-12">
+              <div id="audio-spectrum"></div>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <hr>
+
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <!-- Create action buttons -->
+            <input type="button" id="btn-play" value="Play" disabled="disabled" class="btn btn-primary"/>
+            <input type="button" id="btn-pause" value="Pause" disabled="disabled" class="btn btn-primary"/>
+            <input type="button" id="btn-stop" value="Stop" disabled="disabled" class="btn btn-primary"/>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <div class="jumbotron">
+              {% if upload %}
+                <h2 class="text-center text-primary">{{voice.emotion}}</h2>
+              {% else %}
+                <h3 class="text-center text-danger">.wav extension file only accepted</h3>
+                <h5>{{Exception}}</h5>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+<div class="modal fade" role="dialog" id = "uploadimagemodal" style="text-align:center">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h4>Upload an Audio</h4>
+    </div>
+    <form method = "post" action={% url 'handl' %} enctype="multipart/form-data">
+       {% csrf_token %}
+            <input type="file" class = "form-control p-3" name="file" accept="audio/*">
+            <br>
+            <input type = "submit" class = "btn btn-primary" value = "submit">
+        </div>
+    </form>
+    </div>
+  </div>
+
+<div class="modal fade p-4" role="dialog" id = "recaudio" style="text-align:center">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h4>Recording an Audio</h4>
+    </div>
+    <form method = "post" action={% url 'record' %} enctype="multipart/form-data">
+       {% csrf_token %}
+            <input type = "submit" class = "btn btn-primary" value = "start recording">
+        </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" role="dialog" id = "sample" style="text-align:center">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4>Samples</h4>
+          </div><hr>
+        <a class="btn btn-primary" href="{% url 'sample' value=1 %}">Sample1</a><br><br>
+        <a class="btn btn-primary" href="{% url 'sample' value=2 %}">Sample2</a><br><br>
+        <a class="btn btn-primary" href="{% url 'sample' value=3 %}">Sample3</a><br><br>
+        <a class="btn btn-primary" href="{% url 'sample' value=4 %}">Sample4</a><br><hr>
+    </div>
+  </div>
+</div>
+
+<script>
+    // Store the 3 buttons in some object
+    var buttons = {
+        play: document.getElementById("btn-play"),
+        pause: document.getElementById("btn-pause"),
+        stop: document.getElementById("btn-stop")
+    };
+
+    // Create an instance of wave surfer with its configuration
+    var Spectrum = WaveSurfer.create({
+        container: '#audio-spectrum',
+        progressColor: "#03a9f4"
+    });
+
+    // Handle Play button
+    buttons.play.addEventListener("click", function(){
+        Spectrum.play();
+
+        // Enable/Disable respectively buttons
+        buttons.stop.disabled = false;
+        buttons.pause.disabled = false;
+        buttons.play.disabled = true;
+    }, false);
+
+    // Handle Pause button
+    buttons.pause.addEventListener("click", function(){
+        Spectrum.pause();
+
+        // Enable/Disable respectively buttons
+        buttons.pause.disabled = true;
+        buttons.play.disabled = false;
+    }, false);
+
+
+    // Handle Stop button
+    buttons.stop.addEventListener("click", function(){
+        Spectrum.stop();
+
+        // Enable/Disable respectively buttons
+        buttons.pause.disabled = true;
+        buttons.play.disabled = false;
+        buttons.stop.disabled = true;
+    }, false);
+
+
+    // Add a listener to enable the play button once it's ready
+    Spectrum.on('ready', function () {
+        buttons.play.disabled = false;
+    });
+
+    // If you want a responsive mode (so when the user resizes the window)
+    // the spectrum will be still playable
+    window.addEventListener("resize", function(){
+        // Get the current progress according to the cursor position
+        var currentProgress = Spectrum.getCurrentTime() / Spectrum.getDuration();
+
+        // Reset graph
+        Spectrum.empty();
+        Spectrum.drawBuffer();
+        // Set original position
+        Spectrum.seekTo(currentProgress);
+
+        // Enable/Disable respectively buttons
+        buttons.pause.disabled = true;
+        buttons.play.disabled = false;
+        buttons.stop.disabled = false;
+    }, false);
+
+    var a = "{{voice.description}}";
+    // Load the audio file from your domain !
+    Spectrum.load(a);
+</script>
+
+</body>
+
+</html>
