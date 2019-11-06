@@ -14,5 +14,6 @@ The website contains speech data that is available in three different formats.
 1. Audio Visual – Video with speech
 2. Speech – Audio only
 3. Visual – Video only
+
 I went with the Audio only zip file because we are dealing with finding emotions from speech.
 The zip file consisted of around 1400 audio files which were in ‘wav’ format.
