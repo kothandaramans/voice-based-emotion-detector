@@ -5,7 +5,7 @@ This project presents the implementation of emotion detection from voice with a 
 Convolutional Neural Network architecture (CNN) that processes and classifies voice samples.
 The architecture is an adaptation of an image processing CNN, programmed in Python using Keras
 model-level library and TensorFlow backend. According to the obtained results, the model
-achieves the mean accuracy of 40.70% for eight emotions (neutral, calm, happiness, fear, sadness,
+achieves the mean accuracy of 70.7% for eight emotions (neutral, calm, happiness, fear, sadness,
 disgust, anger, surprise). This model alone took approximately 5 hours to train.
 
 Data Used: I got audio datasets with around 2000 audio files which were in the ‘wav’ format
