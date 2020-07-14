@@ -20,4 +20,8 @@ The zip file consisted of around 1400 audio files which were in ‘wav’ format
 
 # demo
 
-<img src="screenshot//index.png" alt="index">
+<img src="screenshot//index.png" alt="index"> <br>
+<img src="screenshot//record.png" alt="record"> <br>
+<img src="screenshot//upload.png" alt="upload"> <br>
+<img src="screenshot//sample.png" alt="sample"> <br>
+<img src="screenshot//final.png" alt="final"> <br>
